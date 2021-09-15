@@ -1,0 +1,21 @@
+{
+    "name": "shared",
+    "title": "shared",
+    "version": "1.0.0",
+    "description": " ",
+    "type": "components",
+    "components": [
+        {
+            "name": "SharedComponent",
+            "title": "Shared Component",
+            "version": "1.0.0",
+            "description": " ",
+            "path": "src/app/shared-component/shared-component.component.ts",
+            "image": "src/"
+        }
+    ],
+    "readme": "readme instruction",
+    "image": "src/",
+    "author": "weksik",
+    "license": ""
+}

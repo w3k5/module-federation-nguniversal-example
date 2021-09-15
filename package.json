@@ -1,0 +1,24 @@
+{
+  "name": "module-federation-nguniversal-example",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "install:shell": "cd shell && yarn",
+    "install:remote": "cd remote && yarn",
+    "install:all": "yarn install:shell && yarn install:remote",
+    "shell:server:build": "cd shell && ng build && ng run ssr-test:server",
+    "shell:server:start": "cd shell && yarn serve:ssr",
+    "remote:start": "cd remote && yarn start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/w3k5/module-federation-nguniversal-example.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/w3k5/module-federation-nguniversal-example/issues"
+  },
+  "homepage": "https://github.com/w3k5/module-federation-nguniversal-example#readme"
+}
