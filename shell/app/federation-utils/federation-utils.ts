@@ -67,8 +67,3 @@ export async function loadRemoteModule(
         options.exposedModule
     );
 }
-
-// export async function loadRemoteComponent(options: Omit<LoadRemoteModuleOptions, 'exposedModule'>) {
-//   const request: string = await axios.get('http://localhost:3005/plugins/frontend/src_app_marketplace_components_ais-components_first-block_first-block_component_ts-es5.js');
-//   const component = requireFromString(request);
-// }
