@@ -1,11 +1,13 @@
 import { LoadRemoteModuleOptions } from '../interfaces/module-federation.interfaces';
 import axios from 'axios';
 
+const dshs = '*******************************************'
+
 type Scope = unknown;
 type Factory = () => any;
 
 type Container = {
-    init(shareScope: Scope, initScope?: Scope): void;
+    init(shareScope: Scope, initScope?: Scope): Promise<void>;
     get(module: string, getScope?: Scope): Promise<Factory>;
 };
 
@@ -18,7 +20,6 @@ const createContainer = (name: string): Container => {
 
 declare const __webpack_init_sharing__: (shareScope: string) => Promise<void>;
 declare const __webpack_share_scopes__: { default: Scope, plugin: Scope };
-
 const moduleMap: any = {};
 
 export function loadRemoteEntry(remoteEntry: string): Promise<boolean> {
@@ -35,8 +36,9 @@ export function loadRemoteEntry(remoteEntry: string): Promise<boolean> {
 
         script.onload = () => {
             moduleMap[remoteEntry] = true;
+            console.log('moduleMap', moduleMap);
             resolve(moduleMap[remoteEntry]); // window is the global namespace
-        };
+          };
 
         document.body.appendChild(script);
     });
@@ -48,10 +50,8 @@ async function lookupExposedRemote<T>(
 ): Promise<T> {
   // Initializes the share scope. This fills it with known provided modules from this build and all remotes
   await __webpack_init_sharing__('default');
-  // @ts-ignore
-  // @ts-ignore
   const container = createContainer(remoteName);
-  if (!container) {throw new Error('Container with script is not defined')}
+  checkContainer(container);
   await container.init(__webpack_share_scopes__.default);
   const factory = await container.get(exposedModule);
   const Module = factory();
@@ -61,14 +61,24 @@ async function lookupExposedRemote<T>(
 export async function loadRemoteModule(
     options: LoadRemoteModuleOptions
 ): Promise<any> {
-    await loadRemoteEntry(options.remoteEntry);
+    // console.log(await loadWebpackContainer(options.remoteEntry));
+    // await loadRemoteEntry(options.remoteEntry);
     return await lookupExposedRemote<any>(
         options.remoteName,
         options.exposedModule
     );
 }
 
-// export async function loadRemoteComponent(options: Omit<LoadRemoteModuleOptions, 'exposedModule'>) {
-//   const request: string = await axios.get('http://localhost:3005/plugins/frontend/src_app_marketplace_components_ais-components_first-block_first-block_component_ts-es5.js');
-//   const component = requireFromString(request);
-// }
+async function loadWebpackContainer(remote: string) {
+  const req = await axios.get(remote)
+  if (req.status === 200) {
+    return req.data;
+  } else {
+    throw new Error('Webpack was not loaded!');
+  }
+}
+
+function checkContainer(container: Container) {
+  if (!container) {console.log(`%c${dshs} \n Container with script was not defined \n${dshs}`, 'color: tomato')}
+  if (container) { console.log (`%c${dshs} \n Container with script was defined \n${dshs}`, 'color: green') }
+}

@@ -7,6 +7,7 @@
     "install:shell": "cd shell && yarn",
     "install:remote": "cd remote && yarn",
     "install:all": "yarn install:shell && yarn install:remote",
+    "ssr:build": "cd shell && ng run ssr-test:server",
     "shell:server:build": "cd shell && ng build && ng run ssr-test:server",
     "shell:server:start": "cd shell && yarn serve:ssr",
     "remote:start": "cd remote && yarn start"

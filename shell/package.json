@@ -34,10 +34,12 @@
     "axios": "^0.21.4",
     "domino": "^2.1.6",
     "express": "^4.15.2",
+    "jsdom": "^17.0.0",
     "path-browserify": "^1.0.1",
     "require-from-string": "^2.0.2",
     "rxjs": "~6.6.0",
     "tslib": "^2.3.0",
+    "webpack": "^5.52.1",
     "zone.js": "~0.11.4"
   },
   "devDependencies": {
@@ -51,6 +53,7 @@
     "@types/jsdom": "^16.2.13",
     "@types/node": "^16.9.1",
     "@types/require-from-string": "^1.2.1",
+    "@types/webpack": "^5.28.0",
     "jasmine-core": "~3.8.0",
     "karma": "~6.3.0",
     "karma-chrome-launcher": "~3.1.0",

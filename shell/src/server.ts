@@ -4,28 +4,22 @@ import { Engine } from '@nguniversal/common/clover/server';
 import * as express from 'express';
 import { join } from 'path';
 import { format } from 'url';
-import { readFileSync } from 'fs';
+import { readFileSync, existsSync } from 'fs';
 import { LoadRemoteModuleOptions } from '@angular-architects/module-federation';
 import axios from 'axios';
 import requireFromString from 'require-from-string';
 const domino = require('domino');
-
-export async function loadRemoteComponent(options: Omit<LoadRemoteModuleOptions, 'exposedModule'>) {
-    const request: string = await axios.get('http://localhost:3005/plugins/frontend/src_app_marketplace_components_ais-components_first-block_first-block_component_ts-es5.js');
-    const component = requireFromString(request);
-}
-
-
-const template = readFileSync(
-  join(join(process.cwd(), 'dist/ssr-test/browser'), 'index.html')
-).toString();
-const window = domino.createWindow(template);
-global.window = window;
-global.document = window.document;
+import jsdom from "jsdom";
+const { JSDOM } = jsdom;
 
 const PORT = 5000;
 const HOST = `localhost:${PORT}`;
 const DIST = join(__dirname, '../browser');
+const templateDir = join(DIST, 'index.html')
+const template = readFileSync(templateDir).toString("utf-8");
+const window = new JSDOM(template).window as any;
+global.window = window;
+global.document = window.document;
 
 const app = express();
 app.set('views', DIST);
