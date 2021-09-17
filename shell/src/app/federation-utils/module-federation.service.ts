@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { LoadRemoteModuleOptions } from './interfaces/module-federation.interfaces';
+import { LoadRemoteModuleOptions } from '../interfaces/module-federation.interfaces';
 const dshs = '*******************************************';
 
 type Scope = unknown;
@@ -70,9 +70,12 @@ export class ModuleFederationService {
     const container = this.createContainer(remoteName);
     this.checkContainer(container);
     await container.init(__webpack_share_scopes__.default);
-    const factory = await container.get(exposedModule);
+    // @ts-ignore
+    const factory = await window[remoteName].get(exposedModule);
     console.log('-------------------------------------------------');
     console.log(factory.toString());
+    console.log('factory', factory)
+    console.log(factory());
     console.log('-------------------------------------------------');
     return factory() as T;
   }

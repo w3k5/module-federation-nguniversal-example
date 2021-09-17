@@ -4,7 +4,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { RendererModule, TransferHttpCacheModule } from '@nguniversal/common/clover';
-import { ModuleFederationModule } from './module-federation.module';
+import { ModuleFederationModule } from './federation-utils/module-federation.module';
 
 @NgModule({
   declarations: [

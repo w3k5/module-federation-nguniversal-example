@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 
-import { AngularWrapperComponent } from './federation-utils/mf-wrapper.component';
+import { AngularWrapperComponent } from './mf-wrapper.component';
 
 @NgModule({
   exports: [AngularWrapperComponent],

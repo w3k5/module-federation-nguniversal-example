@@ -54,6 +54,11 @@ module.exports = {
           strictVersion: true,
           requiredVersion: "auto",
         },
+        "@nguniversal/express-engine": {
+          singleton: true,
+          strictVersion: true,
+          requiredVersion: "auto",
+        },
 
         ...sharedMappings.getDescriptors(),
       }),

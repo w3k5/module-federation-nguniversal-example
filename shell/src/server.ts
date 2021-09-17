@@ -4,22 +4,13 @@ import { Engine } from '@nguniversal/common/clover/server';
 import * as express from 'express';
 import { join } from 'path';
 import { format } from 'url';
-import { readFileSync, existsSync } from 'fs';
-import { LoadRemoteModuleOptions } from '@angular-architects/module-federation';
-import axios from 'axios';
-import requireFromString from 'require-from-string';
-const domino = require('domino');
-import jsdom from "jsdom";
-const { JSDOM } = jsdom;
+import { readFileSync } from 'fs';
 
 const PORT = 5000;
 const HOST = `localhost:${PORT}`;
 const DIST = join(__dirname, '../browser');
 const templateDir = join(DIST, 'index.html')
 const template = readFileSync(templateDir).toString("utf-8");
-const window = new JSDOM(template).window as any;
-global.window = window;
-global.document = window.document;
 
 const app = express();
 app.set('views', DIST);
@@ -45,7 +36,7 @@ CustomResourceLoader.prototype.fetch = createFetch(mappings);
 
 const ssrEngine = new Engine();
 
-app.get('*', (req, res, next) => {
+app.get('/', (req, res, next) => {
   ssrEngine
     .render({
       publicPath: DIST,

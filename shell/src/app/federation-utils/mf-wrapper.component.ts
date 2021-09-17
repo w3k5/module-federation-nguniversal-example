@@ -1,11 +1,9 @@
-import { ModuleFederationService } from './../module-federation.service';
+import { ModuleFederationService } from './module-federation.service';
 
 import {AfterContentInit, Component, ComponentFactoryResolver, Input, ViewChild, ViewContainerRef} from '@angular/core';
 import {ActivatedRoute, Data} from '@angular/router';
 import {take} from 'rxjs/operators';
 import { LoadRemoteModuleOptions } from '../interfaces/module-federation.interfaces';
-
-import { loadRemoteModule } from './federation-utils';
 
 @Component({
   selector: 'angular-wrapper',
