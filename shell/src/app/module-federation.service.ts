@@ -1,76 +1,87 @@
-import { Inject, Injectable, Type } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
-
-// Wellyes Lib
-import { IStructure } from '@wellyes/spa-shared-lib/interfaces';
-import { ENV_TOKEN, IEnvironment } from '@wellyes/spa-shared-lib/environments';
-
-// Utils
-import { loadRemoteModule } from './federation-utils/federation-utils';
-
-// Interfaces and Types
+import { Injectable } from '@angular/core';
 import { LoadRemoteModuleOptions } from './interfaces/module-federation.interfaces';
+const dshs = '*******************************************';
+
+type Scope = unknown;
+type Factory = () => any;
+
+type Container = {
+  init(shareScope: Scope, initScope?: Scope): Promise<void>;
+  get(module: string, getScope?: Scope): Promise<Factory>;
+};
+
+declare const __webpack_init_sharing__: (shareScope: string) => Promise<void>;
+declare const __webpack_share_scopes__: { default: Scope; plugin: Scope };
+declare const __webpack_require__: any;
 
 @Injectable({ providedIn: 'root' })
 export class ModuleFederationService {
-  // ========== Variables =============
+  moduleMap: any = {};
 
-  componentNameSet = new Set<string>();
+  createContainer(name: string): Container {
+    // @ts-ignore
+    const container = window[name] as Container;
+    return container;
+  }
 
-  // ==================================
-
-  // =========== Subjects =============
-
-  remoteLoaded$ = new BehaviorSubject(false);
-  remoteComponents$ = new BehaviorSubject<Map<string, Type<unknown>> | null>(
-    null
-  );
-
-  // ==================================
-
-  collectComponentNames(structures: IStructure[]): Set<string> {
-    structures.forEach((structure) => {
-      this.componentNameSet.add(structure.item);
-      if (structure.content.length) {
-        this.collectComponentNames(structure.content);
+  loadRemoteEntry(remoteEntry: string): Promise<boolean> {
+    return new Promise<any>((resolve, reject) => {
+      if (this.moduleMap[remoteEntry]) {
+        resolve(this.moduleMap[remoteEntry]);
+        return;
       }
+
+      const script = document.createElement('script');
+      script.src = remoteEntry;
+
+      script.onerror = reject;
+
+      script.onload = () => {
+        this.moduleMap[remoteEntry] = true;
+        console.log('moduleMap', this.moduleMap);
+        resolve(this.moduleMap[remoteEntry]); // window is the global namespace
+      };
+
+      document.body.appendChild(script);
     });
-    return this.componentNameSet;
   }
 
-  prepareMFRequests(
-    fileNames: Set<string>,
-    api?: string,
-  ): LoadRemoteModuleOptions[] {
-    const marketApi = this.environment.marketApi ?? api;
-    if (!marketApi) throw new Error("Marketplace wasn't initialized!");
-
-    return Array.from(fileNames).map((filename) => ({
-      remoteEntry: marketApi,
-      remoteName: 'remote',
-      exposedModule: `${filename}`,
-    }));
-  }
-
-  async loadComponentsFromMarketplace(
-    requests: LoadRemoteModuleOptions[]
-  ): Promise<Map<string, Type<unknown>>> {
-    const cmsComponents: Map<string, Type<unknown>> = new Map();
-    for (let module of requests) {
-      try {
-        const loaded = await loadRemoteModule(module);
-        console.log('loaded', loaded)
-        const exposedModule = loaded[module.exposedModule];
-        console.log('exposedModule', exposedModule)
-        const _blockName = exposedModule._blockName;
-        cmsComponents.set(_blockName, loaded[module.exposedModule]);
-        console.log('Success load', module)
-      } catch (error) {
-        console.error('loadComponentsFromMarketplace', module, error);
-      }
+  checkContainer(container: Container) {
+    if (!container) {
+      console.log(
+        `%c${dshs} \n Container with script was not defined \n${dshs}`,
+        'color: tomato'
+      );
     }
-    return cmsComponents;
+    if (container) {
+      console.log(
+        `%c${dshs} \n Container with script was defined \n${dshs}`,
+        'color: green'
+      );
+    }
   }
 
-  constructor(@Inject(ENV_TOKEN) private environment: IEnvironment) {}
+  async lookupExposedRemote<T>(
+    remoteName: string,
+    exposedModule: string
+  ): Promise<T> {
+    // Initializes the share scope. This fills it with known provided modules from this build and all remotes
+    await __webpack_init_sharing__('default');
+    const container = this.createContainer(remoteName);
+    this.checkContainer(container);
+    await container.init(__webpack_share_scopes__.default);
+    const factory = await container.get(exposedModule);
+    console.log('-------------------------------------------------');
+    console.log(factory.toString());
+    console.log('-------------------------------------------------');
+    return factory() as T;
+  }
+
+  async loadRemoteModule(options: LoadRemoteModuleOptions): Promise<any> {
+    // await loadRemoteEntry(options.remoteEntry);
+    return await this.lookupExposedRemote<any>(
+      options.remoteName,
+      options.exposedModule
+    );
+  }
 }

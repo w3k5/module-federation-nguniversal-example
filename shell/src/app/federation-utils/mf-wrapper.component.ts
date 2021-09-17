@@ -1,3 +1,4 @@
+import { ModuleFederationService } from './../module-federation.service';
 
 import {AfterContentInit, Component, ComponentFactoryResolver, Input, ViewChild, ViewContainerRef} from '@angular/core';
 import {ActivatedRoute, Data} from '@angular/router';
@@ -16,7 +17,8 @@ export class AngularWrapperComponent implements AfterContentInit {
   @ViewChild('container', {read: ViewContainerRef}) container!: ViewContainerRef;
 
   constructor(private componentFactoryResolver: ComponentFactoryResolver,
-              private route: ActivatedRoute
+              private route: ActivatedRoute,
+              private moduleFederationService: ModuleFederationService,
   ) {
   }
 
@@ -32,7 +34,7 @@ export class AngularWrapperComponent implements AfterContentInit {
   }
 
   private async renderComponent(configuration: LoadRemoteModuleOptions): Promise<void> {
-    const component = await loadRemoteModule({
+    const component = await this.moduleFederationService.loadRemoteModule({
       remoteEntry: configuration.remoteEntry,
       remoteName: configuration.remoteName,
       exposedModule: configuration.exposedModule

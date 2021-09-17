@@ -20,6 +20,7 @@ const createContainer = (name: string): Container => {
 
 declare const __webpack_init_sharing__: (shareScope: string) => Promise<void>;
 declare const __webpack_share_scopes__: { default: Scope, plugin: Scope };
+declare const __webpack_require__: any;
 const moduleMap: any = {};
 
 export function loadRemoteEntry(remoteEntry: string): Promise<boolean> {
@@ -54,8 +55,10 @@ async function lookupExposedRemote<T>(
   checkContainer(container);
   await container.init(__webpack_share_scopes__.default);
   const factory = await container.get(exposedModule);
-  const Module = factory();
-  return Module as T;
+  console.log('-------------------------------------------------')
+  console.log(factory.toString());
+  console.log('-------------------------------------------------')
+  return factory() as T;
 }
 
 export async function loadRemoteModule(
