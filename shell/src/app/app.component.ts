@@ -9,7 +9,7 @@ import { LoadRemoteModuleOptions } from './interfaces/module-federation.interfac
 export class AppComponent {
   title = 'ssr-test';
   configuration: LoadRemoteModuleOptions = {
-    remoteEntry: 'http://localhost:4221/remoteEntry.js',
+    remoteEntry: 'http://localhost:3000/remoteEntry.js',
     remoteName: 'remote',
     exposedModule: 'SharedComponent',
   }

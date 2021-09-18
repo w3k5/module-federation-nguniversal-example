@@ -81,7 +81,7 @@ export class ModuleFederationService {
   }
 
   async loadRemoteModule(options: LoadRemoteModuleOptions): Promise<any> {
-    // await loadRemoteEntry(options.remoteEntry);
+    await this.loadRemoteEntry(options.remoteEntry);
     return await this.lookupExposedRemote<any>(
       options.remoteName,
       options.exposedModule
