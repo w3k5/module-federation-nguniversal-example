@@ -11,7 +11,8 @@
     "shell:server:build": "cd shell && ng build && ng run ssr-test:server",
     "shell:server:start": "cd shell && yarn serve:ssr",
     "remote:start": "cd remote && yarn start",
-    "remote:ls": "cd remote && ng build && lite-server --baseDir=\"dist/remote\""
+    "remote:ls": "cd remote && ng build && lite-server --baseDir=\"dist/remote\"",
+    "remote:build": "cd remote && yarn build"
   },
   "repository": {
     "type": "git",
